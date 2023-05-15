@@ -1,18 +1,28 @@
 import "@styles/globals.css";
 
+import Nav from "@components/Nav";
+import Provider from "@components/Provider";
+
 export const metadata = {
   title: "Busland",
   description: "A task i guess...",
 };
 
-function RootLayout({ children }: { children: React.ReactNode }) {
+function RootLayout({ children }:  { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <div className="main">
-        <div className="gradient"></div>
-      </div>
+      <body>
+        
+          <div className="main">
+            <div className="gradient"></div>
+          </div>
 
-      <main className="app">{children}</main>
+          <main className="app">
+            <Nav />
+            {children}
+          </main>
+        
+      </body>
     </html>
   );
 }

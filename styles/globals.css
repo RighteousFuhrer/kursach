@@ -14,7 +14,7 @@
   position: fixed;
   display: flex;
   justify-content: center;
-  padding: 120px 24px 160px 24px;
+  padding: 120px 32px 160px 32px;
   pointer-events: none;
 }
 
@@ -30,7 +30,7 @@
 
 .main:after {
   content: "";
-  background-image: url("/assets/images/grid.svg");
+  background-image: url("/assets/static/images/grid.svg");
   z-index: 1;
   position: absolute;
   width: 100%;
@@ -137,7 +137,7 @@
 
 /* Nav Component */
 .logo_text {
-  @apply max-sm:hidden font-satoshi font-semibold text-lg text-black tracking-wide;
+  @apply  font-satoshi font-semibold text-lg text-black tracking-wide;
 }
 
 .dropdown {
