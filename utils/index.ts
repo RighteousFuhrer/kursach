@@ -1,5 +1,5 @@
 import sql from "mssql";
-import { loadSqlQueries } from "../../utils/utils";
+import { loadSqlQueries } from "./utils";
 
 interface getUserProps {
   dbConnection: sql.ConnectionPool;
@@ -13,4 +13,3 @@ export const getUser = async ({ dbConnection, userId }: getUserProps) => {
   request?.input("userId", sql.Int, userId);
   return request?.query(sqlQueries.getUser);
 };
-

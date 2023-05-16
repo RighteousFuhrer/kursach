@@ -1,13 +1,33 @@
-import { getUser } from "@controllers/Users";
-import dbConnect from "@/utils/dbConnect";
-import User from "@models/User";
+import { User, PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function GET(request: any) {
-  const dbConnection = await dbConnect();
+  let pas: User[] = await prisma.user.findMany();
 
-  if (dbConnection) {
-    const res = await getUser({ dbConnection, userId: 1000 });
-    const user: User = res.recordset[0];
-    return new Response(JSON.stringify(user));
-  }
+  return new Response(JSON.stringify(pas));
+}
+
+export async function POST(request: any) {
+
+  //let pas: User[] = await prisma.user.();
+
+  console.log(request);
+
+  return new Response(JSON.stringify(''));
+}
+
+export async function UPDATE(request: any) {
+  //let pas: User[] = await prisma.user.();
+
+  console.log(request);
+
+  return new Response(JSON.stringify(""));
+}
+export async function DELETE(request: any) {
+  //let pas: User[] = await prisma.user.();
+
+  console.log(request);
+
+  return new Response(JSON.stringify(""));
 }

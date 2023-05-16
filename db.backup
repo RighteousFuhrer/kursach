@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61DF083BAE") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
+
+model EFMigrationsHistory {
+  MigrationId    String @id(map: "PK___EFMigrationsHistory") @db.NVarChar(150)
+  ProductVersion String @db.NVarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}
+
+model Bus {
+  id        Int        @id(map: "PK__Bus__3213E83FEE3E7209")
+  capacity  Int?
+  driverId  Int?
+  routeId   Int?
+  Driver    Driver?    @relation(fields: [driverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Bus_Driver_driverId")
+  RouteInfo RouteInfo? @relation(fields: [routeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Bus_RouteInfo_routeId")
+  Schedule  Schedule[]
+  Ticket    Ticket[]
+}
+
+model Cashier {
+  id           Int            @id(map: "PK__Cashier__3213E83F804A43CB")
+  fname        String?        @db.VarChar(160)
+  sname        String?        @db.VarChar(160)
+  salary       Float?
+  Report       Report[]
+  Ticket       Ticket[]
+}
+
+model Comment {
+  id          Int        @id(map: "PK__Comment__3213E83F09599589")
+  passengerId Int?
+  created     DateTime?  @db.Date
+  comment     String?    @db.Text
+  Passenger   Passenger? @relation(fields: [passengerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Comment_Passenger_passengerId")
+}
+
+model Driver {
+  id     Int     @id(map: "PK__Driver__3213E83F43F08F50")
+  fname  String? @db.VarChar(160)
+  sname  String? @db.VarChar(160)
+  salary Float?
+  Bus    Bus[]
+}
+
+model Passenger {
+  id      Int       @id(map: "PK__Passenge__3213E83F7804B9C7")
+  fname   String   @db.VarChar(40)
+  sname   String   @db.VarChar(40)
+  email String @db.VarChar(40)
+  password String @db.VarChar(30)
+  Comment Comment[]
+  Ticket  Ticket[]
+}
+
+model Report {
+  id        Int       @id(map: "PK__Report__3213E83F9D959685")
+  sold      DateTime? @db.Date
+  ticketId  Int?
+  cashierId Int?
+  Cashier   Cashier?  @relation(fields: [cashierId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Report_Cashier_cashierId")
+  Ticket    Ticket?   @relation(fields: [ticketId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Report_Ticket_ticketId")
+}
+
+model RouteInfo {
+  id            Int       @id(map: "PK__RouteInf__3213E83F73EFC885")
+  departureDate DateTime? @db.Date
+  arivalDate    DateTime? @db.Date
+  departureCity String?   @db.VarChar(160)
+  arrivalCity   String?   @db.VarChar(160)
+  Bus           Bus[]
+  Ticket        Ticket[]
+}
+
+model Schedule {
+  id      Int    @id(map: "PK__Schedule__3213E83F559D670B")
+  routeId Int?
+  busId   Int?
+  price   Float?
+  Bus     Bus?   @relation(fields: [busId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Schedule_Bus_busId")
+
+  @@index([price], map: "NCLIX_Schedule_Price")
+}
+
+model Ticket {
+  id          Int        @id(map: "PK__Ticket__3213E83F39070C67")
+  price       Int?
+  seatNumber  Int?
+  routeId     Int?
+  busId       Int?
+  passengerId Int?
+  cashierId   Int?
+  Report      Report[]
+  Bus         Bus?       @relation(fields: [busId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Ticket_Bus_busId")
+  Cashier     Cashier?   @relation(fields: [cashierId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Ticket_Cashier_cashierId")
+  Passenger   Passenger? @relation(fields: [passengerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Ticket_Passenger_passengerId")
+  RouteInfo   RouteInfo? @relation(fields: [routeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Ticket_RouteInfo_routeId")
+}
