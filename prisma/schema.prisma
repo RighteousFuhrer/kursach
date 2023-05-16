@@ -74,6 +74,8 @@ model User {
   password String    @db.VarChar(30)
   Comment  Comment[]
   BusSeat  BusSeat[]
+
+  @@unique([username, email])
 }
 
 model Report {

@@ -8,9 +8,8 @@ import { Provider as authProvider } from "next-auth/providers";
 import Router from "next/router";
 import axios from "axios";
 
-
 function Nav() {
-  const isUserLoggedIn = true;
+  const { data: session, status } = useSession();
 
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -21,55 +20,11 @@ function Nav() {
   useEffect(() => {
     const setAllProviders = async () => {
       const response = await getProviders();
-
+      
       setProviders(response);
     };
-    setAllProviders();
+    console.log(session, status);
   }, []);
-
-  const redirectToHome = () => {
-    const { pathname } = Router;
-    if (pathname === "/auth") {
-      Router.push("/");
-    }
-  };
-
-  const registerUser = async () => {
-    const res = await axios.post(
-      "api/register",
-      {
-        username,
-        email,
-        password,
-      },
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then(async () => {
-      await loginUser();
-      redirectToHome();
-    })
-    .catch( (err) => {
-      console.log(err);
-    });
-  };
-
-  const loginUser = async () => {
-    const res: any = signIn("credentials", {
-      email: email,
-      password: password,
-      redirect: false,
-      callbackUrl: `${window.location.origin}`,
-    });
-
-    res.error && console.log(res.error);
-  };
-
-  const formSubmit = async () => {};
 
   return (
     <nav className="flex-between w-full mb-16 pt-3">
@@ -83,11 +38,14 @@ function Nav() {
         />
         <p className="logo_text">Busland</p>
       </Link>
-
       <div className="">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
-            <button type="button" onClick={() => {}} className="outline_btn">
+            <button
+              type="button"
+              onClick={() => signOut()}
+              className="outline_btn"
+            >
               Sign out
             </button>
 
@@ -103,15 +61,13 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers &&
-              Object.values(providers).map((provider: any) => (
-                <button
-                  type="button"
-                  key={provider.id}
-                  onClick={() => signIn(provider.id)}
-                  className="black_btn"
-                ></button>
-              ))}
+            <button
+              type="button"
+              onClick={() => signIn()}
+              className="black_btn"
+            >
+              SignIn
+            </button>
           </>
         )}
       </div>
