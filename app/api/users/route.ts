@@ -1,35 +1,123 @@
-import { User, PrismaClient } from "@prisma/client";
-import { NextRequest } from 'next/server';
+import { User, PrismaClient, Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
-  let pas: User[] = await prisma.user.findMany();
+  const params = request.nextUrl.searchParams;
 
-  console.log(request)
+  const user = await prisma.user.findFirst({
+    where: {
+      id: Number(params.get("id")),
+    },
+  });
 
-  return new Response(JSON.stringify(pas));
+  if (user) {
+    const { password, ...secureuser } = user;
+    return new Response(JSON.stringify(secureuser), {
+      status: 200,
+    });
+  } else {
+    return new Response(
+      JSON.stringify({ code: 400, message: "User not found" }),
+      {
+        status: 400,
+        statusText: "User already exists",
+      }
+    );
+  }
 }
 
-export async function POST(request:NextRequest) {
-  //let pas: User[] = await prisma.user.();
+export async function POST(request: NextRequest) {
+  let res;
+  try {
+    const data = await request.json();
 
-  console.log(await request.json());
+    if (
+      await prisma.user.findFirst({
+        where: {
+          OR: [
+            {
+              email: data.email,
+            },
+            {
+              username: data.username,
+            },
+          ],
+        },
+      })
+    ) {
+      throw new Error("User exists");
+    }
+    let user: Prisma.UserCreateInput;
+    user = {
+      email: data.email,
+      username: data.username,
+      password: data.password,
+    };
 
-  return new Response(JSON.stringify(request.body));
+    res = await prisma.user.create({ data: user });
+  } catch (error) {
+    console.log(error);
+    return new Response(
+      JSON.stringify({ code: 400, message: "User already exists" }),
+      {
+        status: 400,
+        statusText: "User already exists",
+      }
+    );
+  }
+
+  return new Response(JSON.stringify(res), {
+    status: 200,
+  });
 }
 
-export async function UPDATE(request: Request) {
-  //let pas: User[] = await prisma.user.();
+export async function PUT(request: NextRequest) {
+  const data: User = await request.json();
+  const res = await prisma.user.update({
+    where: { id: Number(data.id) },
+    data: {
+      email: data.email,
+      password: data.password,
+      username: data.username,
+    },
+  });
 
-  console.log(request.body);
+  if (!res) {
+    return new Response(
+      JSON.stringify({ code: 400, message: "User not found" }),
+      {
+        status: 400,
+        statusText: "User not found",
+      }
+    );
+  }
 
-  return new Response(JSON.stringify(request.body));
+  return new Response(JSON.stringify(res), {
+    status: 200,
+  });
 }
-export async function DELETE(request: Request) {
-  //let pas: User[] = await prisma.user.();
+export async function DELETE(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
 
-  console.log(request.body);
+  console.log(params);
 
-  return new Response(JSON.stringify(request.body));
+  const res = await prisma.user.delete({
+    where: { id: Number(params.get("id")) },
+  });
+
+  if (!res) {
+    return new Response(
+      JSON.stringify({ code: 400, message: "User already exists" }),
+      {
+        status: 400,
+        statusText: "User already exists",
+      }
+    );
+  }
+
+  return new Response(JSON.stringify(res), {
+    status: 200,
+  });
 }

@@ -66,7 +66,7 @@ function Nav() {
               onClick={() => signIn()}
               className="black_btn"
             >
-              SignIn
+              Sign in
             </button>
           </>
         )}

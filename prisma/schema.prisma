@@ -71,7 +71,7 @@ model User {
   id       Int       @id(map: "PK__User__3213E83F7804B9C7") @default(autoincrement())
   username String    @db.VarChar(40)
   email    String    @db.VarChar(40)
-  password String    @db.VarChar(30)
+  password String    @db.VarChar(40)
   Comment  Comment[]
   BusSeat  BusSeat[]
 

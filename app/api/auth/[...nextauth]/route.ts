@@ -38,13 +38,11 @@ const handler = NextAuth({
             email: credentials!.email,
           },
         });
-
         if (!user) {
           throw new Error("Email is not registered");
         }
         const isPasswordCorrect = credentials!.password === user.password;
 
-        // const valid = await compare(credentials!.password, user.password);
 
         if (!isPasswordCorrect) {
           console.log("Not a valid password");
@@ -57,6 +55,9 @@ const handler = NextAuth({
       },
     }),
   ],
+  pages: {
+    signIn: "/auth",
+  },
 });
 
 export { handler as GET, handler as POST };
