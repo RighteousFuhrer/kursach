@@ -1,20 +1,35 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 const handler = NextAuth({
+  secret: process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
   },
   callbacks: {
-    jwt({ token, trigger, session }) {
-      if (trigger === "update" && session?.name) {
-        token.name = session;
+    jwt({ user, token, account, trigger, session }) {
+      if (trigger === "update" && session) {
+        token.email = session.user.email;
+        token.name = session.user.name;
       }
-      return token;
+
+      return { ...token, ...user };
+    },
+    session({ session, token }) {
+      if (token) {
+        session.user = {
+          name: token.name,
+          email: token.email,
+          image: token.picture,
+        };
+
+        session.user = token;
+      }
+
+      return session;
     },
   },
   providers: [
@@ -43,13 +58,16 @@ const handler = NextAuth({
         }
         const isPasswordCorrect = credentials!.password === user.password;
 
-
         if (!isPasswordCorrect) {
           console.log("Not a valid password");
         }
 
         if (user) {
-          return user as any;
+          return {
+            email: user.email,
+            id: user.id,
+            name: user.username,
+          } as any;
         }
         return null;
       },

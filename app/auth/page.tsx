@@ -17,7 +17,6 @@ import {
   FormikHelpers,
 } from "formik";
 import * as Yup from "yup";
-import { Action } from "history";
 
 const Auth = () => {
   const [title, setTitle] = useState("Login");
@@ -29,16 +28,7 @@ const Auth = () => {
     password2: "",
   });
 
-  const redirectToHome = () => {
-    const { pathname } = Router;
-    if (pathname === "/auth") {
-      // TODO: redirect to a success register page
-      Router.push("/");
-    }
-  };
-
   const registerUser = async () => {
-    console.log("registering")
     const res = await axios
       .post(
         "/api/users",
@@ -60,7 +50,6 @@ const Auth = () => {
       .catch((error) => {
         console.log(error);
       });
-    console.log(res);
   };
 
   const loginUser = async () => {
@@ -93,7 +82,7 @@ const Auth = () => {
       <div className="w-full max-w-xs mt-12">
         <Formik initialValues={{}} onSubmit={onSubmit}>
           {(props) => (
-            <Form className="bg-slate-100  rounded-lg px-8 pt-6 pb-8 mb-4 w-96 b border-solid border-gray-300 border ">
+            <Form className="login-block">
               <h1 className="text-center font-bold text-2xl mb-4 ">{title}</h1>
               <div className="mb-4">
                 {title === "Sign Up" && (

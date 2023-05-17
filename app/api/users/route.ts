@@ -1,5 +1,5 @@
 import { User, PrismaClient, Prisma } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   const user = await prisma.user.findFirst({
     where: {
-      id: Number(params.get("id")),
+      email: params.get("email") || "",
     },
   });
 

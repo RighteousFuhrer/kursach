@@ -10,24 +10,18 @@ import axios from "axios";
 
 function Nav() {
   const { data: session, status } = useSession();
-
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
   const [providers, setProviders] = useState<any>(null);
 
   useEffect(() => {
     const setAllProviders = async () => {
       const response = await getProviders();
-      
+
       setProviders(response);
     };
-    console.log(session, status);
   }, []);
 
   return (
-    <nav className="flex-between w-full mb-16 pt-3">
+    <nav className="flex-between w-full mb-16 pt-7">
       <Link href="/" className="flex gap-2 flex-center">
         <Image
           src="/assets/static/images/bus.png"
@@ -38,38 +32,47 @@ function Nav() {
         />
         <p className="logo_text">Busland</p>
       </Link>
+      <div className="flex w-80 justify-evenly">
+        <Link href="/tickets" className="nav-link">
+          Tickets
+        </Link>
+        <Link href="/tickets" className="nav-link">
+          Comunity
+        </Link>
+      </div>
       <div className="">
-        {session?.user ? (
-          <div className="flex gap-3 md:gap-5">
-            <button
-              type="button"
-              onClick={() => signOut()}
-              className="outline_btn"
-            >
-              Sign out
-            </button>
+        {status !== "loading" &&
+          (session?.user ? (
+            <div className="flex gap-3 md:gap-5">
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="outline_btn"
+              >
+                Sign out
+              </button>
 
-            <Link href="/profile">
-              <Image
-                src="/assets/static/images/profile.png"
-                alt="Profile image"
-                width={35}
-                height={35}
-                className="object-cover rounded-full aspect-square"
-              />
-            </Link>
-          </div>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => signIn()}
-              className="black_btn"
-            >
-              Sign in
-            </button>
-          </>
-        )}
+              <Link href="/profile">
+                <Image
+                  src="/assets/static/images/avatar.png"
+                  alt="Profile image"
+                  width={38}
+                  height={38}
+                  className="object-cover rounded-full aspect-square"
+                />
+              </Link>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => signIn()}
+                className="black_btn"
+              >
+                Sign in
+              </button>
+            </>
+          ))}
       </div>
     </nav>
   );

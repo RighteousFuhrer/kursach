@@ -14,7 +14,7 @@
   position: fixed;
   display: flex;
   justify-content: center;
-  padding: 120px 32px 160px 32px;
+  padding: 120px 80px 160px 80px;
   pointer-events: none;
 }
 
@@ -74,11 +74,11 @@
 /* Tailwind Styles */
 
 .app {
-  @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;
+  @apply relative z-10 flex justify-center items-center flex-col max-w-6xl mx-auto sm:px-16 px-6;
 }
 
 .black_btn {
-  @apply rounded-full border border-black bg-black py-1.5 px-5 text-white transition-all hover:bg-white hover:text-black text-center text-sm font-inter flex items-center justify-center;
+  @apply rounded-full border border-black bg-black py-1.5 px-5 text-white transition-all hover:bg-white hover:text-black text-center font-inter flex items-center justify-center;
 }
 
 .outline_btn {
@@ -167,4 +167,12 @@
 
 .flex-between {
   @apply flex justify-between items-center;
+}
+
+.nav-link {
+  @apply text-lg font-semibold rounded-full p-1 px-4 hover:bg-stone-300 hover:text-neutral-800; 
+}
+
+.login-block {
+  @apply bg-slate-100 rounded-lg px-8 pt-6 pb-8 mb-4 w-96 border-solid border-gray-300 border; 
 }
