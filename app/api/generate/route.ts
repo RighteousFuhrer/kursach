@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
   const user = (await axios.get("https://randomuser.me/api/")).data;
 
-
+  
   return new NextResponse(
     JSON.stringify({
       email: user.results[0].email,

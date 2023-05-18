@@ -9,16 +9,15 @@ const prisma = new PrismaClient();
 export async function POST(request: NextRequest) {
   const data = await request.json();
 
-  const users = await prisma.user.findMany();
+  const drivers = await prisma.driver.findMany();
+  const routes =await prisma.route.findMany();
 
   [...new Array(data.amount)].forEach(async () => {
-    const comment: Prisma.CommentUncheckedCreateInput = {
-      created: faker.date.recent(),
-      comment: faker.lorem.sentences({ min: 2, max: 8 }),
-      userId: users[Math.floor(Math.random() * users.length)].id,
+    const bus: Prisma.BusUncheckedCreateInput = {
+      capacity : Math.floor(Math.random()*40)  + 20,
+      driverId : drivers[Math.floor(Math.random()*drivers.length)].id
     };
-
-    await prisma.comment.create({ data: comment });
+    await prisma.bus.create({ data: bus });
   });
 
   return new NextResponse(JSON.stringify({}), {
