@@ -2,8 +2,9 @@ import { faker } from "@faker-js/faker";
 import { User, PrismaClient, Prisma } from "@prisma/client";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import dbClient from "@utils/dbConnect";
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = dbClient()!;
 
 export async function POST(request: NextRequest) {
   const data = await request.json();

@@ -1,8 +1,9 @@
 import { User, PrismaClient, Prisma } from "@prisma/client";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import dbClient from "@utils/dbConnect";
 
-const prisma = new PrismaClient();
+const prisma = dbClient()!;
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
@@ -18,10 +19,9 @@ export async function POST(request: NextRequest) {
       fname: e.name.first,
       sname: e.name.last,
     };
-    
+
     const res = await prisma.driver.create({ data: user });
   });
-
 
   return new NextResponse("", { status: 200 });
 }

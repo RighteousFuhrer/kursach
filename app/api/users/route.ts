@@ -1,7 +1,9 @@
 import { User, PrismaClient, Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 
-const prisma = new PrismaClient();
+import dbClient from "@utils/dbConnect";
+
+const prisma:PrismaClient = dbClient()!;
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -100,8 +102,6 @@ export async function PUT(request: NextRequest) {
 }
 export async function DELETE(request: NextRequest) {
   const params = request.nextUrl.searchParams;
-
-  console.log(params);
 
   const res = await prisma.user.delete({
     where: { id: Number(params.get("id")) },

@@ -1,8 +1,31 @@
 import { faker } from "@faker-js/faker";
-import { User, PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { LocalTicket } from "@interfaces/Tickets";
+import dbClient from "@utils/dbConnect";
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = dbClient()!;
+
+export async function GET(req: NextRequest) {
+  const params = req.nextUrl.searchParams;
+
+  let res =
+    await prisma.$queryRaw`SELECT [BusTicket].seatNumber,[BusRoute].id as routeId, [busId], departureDate, departureCity, arivalDate,price, arrivalCity FROM 
+dbo.BusTicket
+join 
+dbo.BusRoute
+on dbo.BusTicket.routeId = BusRoute.id
+join 
+dbo.Route 
+on BusRoute.routeId =  dbo.Route.id
+join 
+dbo.Receipt
+on Receipt.busTicketId  = BusTicket.id
+where BusTicket.userId = ${params.get("userId")}
+`;
+
+  return new Response(JSON.stringify(res));
+}
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
@@ -10,7 +33,7 @@ export async function POST(request: NextRequest) {
   const cashiers = await prisma.cashier.findMany();
   const busRoute = await prisma.busRoute.findFirst({
     where: {
-      id: data.busRouteId,
+      id: Number(data.routeId),
     },
   });
   const cap = await prisma.bus.findFirst({
@@ -23,7 +46,7 @@ export async function POST(request: NextRequest) {
   });
   const lastSeat = await prisma.busTicket.findFirst({
     where: {
-      routeId: data.routeId,
+      routeId: Number(data.routeId),
     },
     orderBy: {
       id: "desc",
@@ -45,15 +68,15 @@ export async function POST(request: NextRequest) {
 
   const busTicket: Prisma.BusTicketUncheckedCreateInput = {
     id: busTicketId,
-    routeId: data.busRouteId,
+    routeId: Number(data.routeId),
     seatNumber: lastSeat ? lastSeat.seatNumber + 1 : 1,
-    userId: data.userId,
+    userId: Number(data.userId),
   };
 
   const receipt: Prisma.ReceiptUncheckedCreateInput = {
     id: receiptId,
     busTicketId,
-    price: faker.number.int({ min: 100000000, max: 999999999 }),
+    price: faker.number.int({ min: 50, max: 10000 }),
     cashierId: cashiers[faker.number.int({ max: cashiers.length - 1 })].id,
     sellDate: faker.date.between({
       from: faker.date.recent({ days: 30, refDate: Date.now() }),

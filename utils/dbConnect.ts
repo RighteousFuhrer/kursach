@@ -1,37 +1,17 @@
-import sql from "mssql";
-import cnfg from "./config"
+import { PrismaClient } from "@prisma/client";
 
-const dbConnect = async (config: sql.config = {...cnfg}) => {
-  let pool: sql.ConnectionPool | null;
+const dbClient = () => {
+  let prisma: PrismaClient = new PrismaClient();
 
-  const closePool = async () => {
-    try {
-      await pool?.close();
-      pool = null;
-    } catch (error) {
-      pool = null;
-      console.log(error);
+  const getConnection = () => {
+    if (prisma) {
+      return prisma;
     }
-  };
 
-  const getConnection = async () => {
-    try {
-      if (pool) {
-        return pool;
-      }
-      pool = await sql.connect(config);
-      pool.on("error", async (err: any) => {
-        console.log(err);
-        await closePool();
-      });
-      return pool;
-    } catch (error) {
-      console.log(error);
-      pool = null;
-    }
+    prisma = new PrismaClient();
   };
 
   return getConnection();
 };
 
-export default dbConnect;
+export default dbClient;

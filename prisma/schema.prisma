@@ -47,11 +47,11 @@ model Driver {
 }
 
 model Comment {
-  id      Int       @id(map: "PK__Comment__3213E83F09599589") @default(autoincrement())
-  created DateTime? @db.Date
-  comment String?   @db.Text
-  userId  Int?
-  user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      Int      @id(map: "PK__Comment__3213E83F09599589") @default(autoincrement())
+  created DateTime @db.DateTime
+  comment String   @db.Text
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -84,7 +84,6 @@ model BusRoute {
   BusTicket     BusTicket[]
 }
 
-
 model BusTicket {
   id         Int       @id(map: "PK__BusSeat__3214E83FEE3E7229")
   routeId    Int
@@ -92,15 +91,15 @@ model BusTicket {
   userId     Int?
   User       User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_BusSeat_User_userId")
   BusRoute   BusRoute? @relation(fields: [routeId], references: [id], onDelete: NoAction)
-  Receipt     Receipt?
+  Receipt    Receipt?
 }
 
 model Receipt {
   id          Int       @id()
   price       Int
   busTicketId Int       @unique
-  cashierId Int?
-  sellDate  DateTime  @db.DateTime
-  Cashier   Cashier? @relation(fields: [cashierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cashierId   Int?
+  sellDate    DateTime  @db.DateTime
+  Cashier     Cashier?  @relation(fields: [cashierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   BusTicket   BusTicket @relation(fields: [busTicketId], references: [id])
 }

@@ -1,8 +1,9 @@
 import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
+import dbClient from "@utils/dbConnect";
 
-const prisma = new PrismaClient();
+const prisma = dbClient()!;
 
 const handler = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -48,6 +49,7 @@ const handler = NextAuth({
         },
       },
       async authorize(credentials, req) {
+        
         const user = await prisma.user.findFirst({
           where: {
             email: credentials!.email,

@@ -37,7 +37,7 @@ function Nav() {
           Tickets
         </Link>
         <Link href="/tickets" className="nav-link">
-          Comunity
+          Social media
         </Link>
       </div>
       <div className="">
@@ -46,7 +46,12 @@ function Nav() {
             <div className="flex gap-3 md:gap-5">
               <button
                 type="button"
-                onClick={() => signOut()}
+                onClick={() =>
+                  signOut({
+                    redirect: false,
+                    callbackUrl: `${window.location.origin}`,
+                  })
+                }
                 className="outline_btn"
               >
                 Sign out
