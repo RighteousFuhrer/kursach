@@ -7,19 +7,29 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import dateComparer from "@utils/dateComparer";
 
+interface dropDownProps {
+  values?: string[];
+  selected?: string;
+  show?: boolean;
+}
+
+interface citiesInterface {
+  data: {
+    dep: string[];
+    arr: string[];
+  };
+}
+
 function page() {
   const { data: session, status } = useSession();
   const [tickets, setTickets] = useState<LocalTicket[]>([]);
-  const [from, setFrom] = useState<string[]>([]);
-  const [to, setTo] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [destinationCities, setDestinationCities] = useState("");
-  const [arrivalCities, setArrivalCities] = useState("");
 
-  const handleSwitch = () => {
-    let temp = destinationCities;
-    setDestinationCities(arrivalCities);
-    setArrivalCities(temp);
+  const [cityFrom, setCityFrom] = useState();
+  const [cityTo, setCityTo] = useState();
+
+  const handleSearch = () => {
+    fetchTicketsByCity();
   };
 
   useEffect(() => {
@@ -70,13 +80,11 @@ function page() {
         console.log(error);
       });
   };
-
-  const fetchCities = async () => {
+  const fetchTicketsByCity = async () => {
     await axios
-      .get("/api/citiesData")
+      .get("/api/tickets?from=" + cityFrom + "&to=" + cityTo)
       .then((response) => {
-        setFrom(response.data.dep);
-        setTo(response.data.arr);
+        setTickets(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -85,64 +93,75 @@ function page() {
 
   useEffect(() => {
     fetchTickets();
-    fetchCities();
   }, []);
 
   return (
     <div className="w-full flex flex-col">
       <div className="bg-stone-50 flex shadow-lg justify-evenly py-6 px-8 border-b">
         <div>
-          <label
-            htmlFor="countries"
-            className="block mb-2 text-sm font-medium text-gray-700"
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="dropdown"
+            className="text-grey-700  border   focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center  "
+            type="button"
           >
             From
-          </label>
-          <select
-            onChange={(e) => setArrivalCities(e.target.value)}
-            id="countries"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-40 p-2.5 dark:placeholder-gray-400 "
-            value={arrivalCities}
-          >
-            {from.map((city, index) => {
-              return (
-                <option key={index} value={city}>
-                  {city}
-                </option>
-              );
-            })}
-          </select>
+            <svg
+              className="w-4 h-4 ml-2"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+
+          <div
+            id="dropdown"
+            className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+          ></div>
         </div>
         <div className="flex flex-col justify-center">
           <div>
             <button
-              onClick={handleSwitch}
+              onClick={handleSearch}
               className="bg-blue-500 py-2 px-4  font-semibold text-white shadow-md rounded-lg hover:bg-blue-700"
             >
-              Switch
+              Search
             </button>
           </div>
         </div>
         <div>
-          <label
-            htmlFor="countries"
-            className="block mb-2 text-sm font-medium text-gray-700"
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="dropdown"
+            className="text-grey-700  border   focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center  "
+            type="button"
           >
             To
-          </label>
-          <select
-            onChange={(e) => setDestinationCities(e.target.value)}
-            id="countries"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-40 p-2.5 dark:placeholder-gray-400 "
-          >
-            {to.map((city, index) => {
-              return (
-                <option key={index} value={city}>
-                  {city}
-                </option>
-              );
-            })}
-          </select>
+            <svg
+              className="w-4 h-4 ml-2"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
         </div>
       </div>
 

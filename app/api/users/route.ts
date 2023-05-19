@@ -3,20 +3,26 @@ import { NextRequest } from "next/server";
 
 import dbClient from "@utils/dbConnect";
 
-const prisma:PrismaClient = dbClient()!;
+const prisma: PrismaClient = dbClient()!;
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
 
   const user = await prisma.user.findFirst({
     where: {
-      email: params.get("email") || "",
+      OR: [
+        {
+          email: params.get("email") || "",
+        },
+        {
+          id: Number(params.get("id") || -1),
+        },
+      ],
     },
   });
 
   if (user) {
-    const { password, ...secureuser } = user;
-    return new Response(JSON.stringify(secureuser), {
+    return new Response(JSON.stringify(user), {
       status: 200,
     });
   } else {

@@ -11,18 +11,17 @@ export async function GET(req: NextRequest) {
 
   let res =
     await prisma.$queryRaw`SELECT [BusTicket].seatNumber,[BusRoute].id as routeId, [busId], departureDate, departureCity, arivalDate,price, arrivalCity FROM 
-dbo.BusTicket
-join 
-dbo.BusRoute
-on dbo.BusTicket.routeId = BusRoute.id
-join 
-dbo.Route 
-on BusRoute.routeId =  dbo.Route.id
-join 
-dbo.Receipt
-on Receipt.busTicketId  = BusTicket.id
-where BusTicket.userId = ${params.get("userId")}
-`;
+    dbo.BusTicket
+    join 
+    dbo.BusRoute
+    on dbo.BusTicket.routeId = BusRoute.id
+    join 
+    dbo.Route 
+    on BusRoute.routeId =  dbo.Route.id
+    join 
+    dbo.Receipt
+    on Receipt.busTicketId  = BusTicket.id
+    where [BusTicket].userId = ${params.get('userId')}`;
 
   return new Response(JSON.stringify(res));
 }

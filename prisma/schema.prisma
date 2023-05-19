@@ -89,7 +89,7 @@ model BusTicket {
   routeId    Int
   seatNumber Int
   userId     Int?
-  User       User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_BusSeat_User_userId")
+  User       User?     @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: SetNull)
   BusRoute   BusRoute? @relation(fields: [routeId], references: [id], onDelete: NoAction)
   Receipt    Receipt?
 }

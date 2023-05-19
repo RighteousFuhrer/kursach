@@ -8,6 +8,7 @@ import Image from "next/image";
 import CommentBlock from "./CommentBlock";
 import TicketBlock from "./TicketBlock";
 import { LocalTicket } from "@interfaces/Tickets";
+import Link from "next/link";
 
 function Profile() {
   const { data: session, status } = useSession();
@@ -77,8 +78,10 @@ function Profile() {
     if (status === "authenticated") {
       fetchUser();
     }
-    console.log(session)
+    console.log(session);
   }, [status]);
+
+  
 
   useEffect(() => {
     if (user) {
@@ -113,7 +116,9 @@ function Profile() {
 
               <div className="flex content-center">
                 <div className="">
-                  <button className="black_btn inline">Edit</button>
+                  <Link href="/profile/edit" className="black_btn">
+                    Edit
+                  </Link>
                 </div>
               </div>
             </>

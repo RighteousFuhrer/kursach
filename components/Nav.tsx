@@ -36,7 +36,7 @@ function Nav() {
         <Link href="/tickets" className="nav-link">
           Tickets
         </Link>
-        <Link href="/tickets" className="nav-link">
+        <Link href="/media" className="nav-link">
           Social media
         </Link>
       </div>
@@ -48,7 +48,7 @@ function Nav() {
                 type="button"
                 onClick={() =>
                   signOut({
-                    redirect: false,
+                    redirect: true,
                     callbackUrl: `${window.location.origin}`,
                   })
                 }
